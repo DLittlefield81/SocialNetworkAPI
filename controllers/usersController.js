@@ -44,4 +44,32 @@ module.exports = {
             .then(() => res.json({ message: 'User and associated thoughts deleted!' }))
             .catch((err) => res.status(500).json(err));
     },
+    // Add a friend
+    addFriend(req, res) {
+        User.findOneAndUpdate({ _id: req.params.userId }, { $addToSet: { friends: req.params.friendId } }, { new: true })
+            .then((user) => {
+                if (!user) {
+                    return res.status(404).json({ message: 'User with this ID does not exist.' });
+                }
+                res.json(user);
+            })
+            .catch((err) => {
+                console.log(err);
+                res.status(500).json(err);
+            });
+    },
+    // Remove a friend
+    removeFriend(req, res) {
+        User.findOneAndUpdate({ _id: req.params.userId }, { $pull: { friends: req.params.friendId } }, { new: true })
+            .then((user) => {
+                if (!user) {
+                    return res.status(404).json({ message: 'User with this ID does not exist.' });
+                }
+                res.json(user);
+            })
+            .catch((err) => {
+                console.log(err);
+                res.status(500).json(err);
+            });
+    },
 };
