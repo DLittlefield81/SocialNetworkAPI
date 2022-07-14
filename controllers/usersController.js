@@ -1,9 +1,10 @@
 const { User, Thoughts } = require('../models');
 
-module.exports = {
+const userController ={
     // Get all users
     getUsers(req, res) {
         User.find()
+            .select('-__v')
             .then((users) => res.json(users))
             .catch((err) => res.status(500).json(err));
     },
@@ -31,17 +32,28 @@ module.exports = {
             { $set: req.body },
             { runValidators: true, new: true }
         )
+            .then((user) => {
+                if (!user) {
+                    return res.status(404).json({ message: 'User with this ID does not exist.' });
+                }
+                res.json(user);
+            })
+                .catch((err) => {
+                    console.log(err);
+                    res.status(500).json(err);
+                });
+       
     },
 
     // Delete a user and associated apps
     deleteUser(req, res) {
         User.findOneAndDelete({ _id: req.params.userId })
             .then((user) =>
-                !user
-                    ? res.status(404).json({ message: 'No user with that ID' })
-                    : Thoughts.deleteMany({ _id: { $in: user.thoughts } })
-            )
-            .then(() => res.json({ message: 'User and associated thoughts deleted!' }))
+            //     !user
+            //         ? res.status(404).json({ message: 'No user with that ID' })
+            //         : Thought.deleteMany({ _id: { $in: user.thoughts } })
+            // )
+            // .then(() => res.json({ message: 'User and associated thoughts deleted!' }))
             .catch((err) => res.status(500).json(err));
     },
     // Add a friend
@@ -73,3 +85,4 @@ module.exports = {
             });
     },
 };
+module.exports = userController;
