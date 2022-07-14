@@ -24,14 +24,15 @@ module.exports = {
             .then((user) => res.json(user))
             .catch((err) => res.status(500).json(err));
     },
-    // Updates and application using the findOneAndUpdate method. Uses the ID, and the $set operator in mongodb to inject the request body. Enforces validation.
+    // Updates and Thought using the findOneAndUpdate method. Uses the ID, and the $set operator in mongodb to inject the request body. Enforces validation.
     updateUser(req, res) {
         User.findOneAndUpdate(
             { _id: req.params.userId },
             { $set: req.body },
             { runValidators: true, new: true }
-        )},
-    
+        )
+    },
+
     // Delete a user and associated apps
     deleteUser(req, res) {
         User.findOneAndDelete({ _id: req.params.userId })
