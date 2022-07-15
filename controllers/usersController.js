@@ -1,6 +1,6 @@
-const { User, Thoughts } = require('../models');
+const { User, Thought } = require('../models');
 
-const userController ={
+const userController = {
     // Get all users
     getUsers(req, res) {
         User.find()
@@ -38,23 +38,29 @@ const userController ={
                 }
                 res.json(user);
             })
-                .catch((err) => {
-                    console.log(err);
-                    res.status(500).json(err);
-                });
+            .catch((err) => {
+                console.log(err);
+                res.status(500).json(err);
+            });
        
     },
 
     // Delete a user and associated apps
     deleteUser(req, res) {
         User.findOneAndDelete({ _id: req.params.userId })
-            .then((user) =>
-            //     !user
-            //         ? res.status(404).json({ message: 'No user with that ID' })
-            //         : Thought.deleteMany({ _id: { $in: user.thoughts } })
-            // )
-            // .then(() => res.json({ message: 'User and associated thoughts deleted!' }))
-            .catch((err) => res.status(500).json(err));
+            .then((user) => {
+                if (!user) {
+                return res.status(404).json({ message: 'No user with this id!' });
+            }
+                return Thought.deleteMany({ _id: { $in: user.thoughts } });
+            })
+            .then(() => {
+                res.json({ message: 'User and associated thoughts deleted!' });
+            })
+            .catch((err) => {
+                console.log(err);
+                res.status(500).json(err);
+            });
     },
     // Add a friend
     addFriend(req, res) {
