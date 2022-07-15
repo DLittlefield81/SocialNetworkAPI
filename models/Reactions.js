@@ -4,7 +4,7 @@ const reactionSchema = new Schema(
     {
         reactionId: {
             type: Schema.Types.ObjectId,
-            //default
+            default: () => new Types.ObjectId(),
         },
 
         reactionBody: {
@@ -27,10 +27,10 @@ const reactionSchema = new Schema(
             ]
         },
 
-        createdat: {
+        createdate: {
             type: Date,
             default: Date.now,
-            //get
+            get: (timestamp) => moment(timestamp).format('MMM Do, YYYY [at] hh:mm a'),
         }
     },
 )

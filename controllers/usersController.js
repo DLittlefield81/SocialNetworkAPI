@@ -51,8 +51,8 @@ const userController = {
             .then((user) => {
                 if (!user) {
                 return res.status(404).json({ message: 'No user with this id!' });
-            }
-                return Thought.deleteMany({ _id: { $in: user.thoughts } });
+            }   
+                return Thought.deleteMany({ _id: { $in: user.thoughts } });   //Sweepstakes.deleteMany({ client_id: this._id });
             })
             .then(() => {
                 res.json({ message: 'User and associated thoughts deleted!' });
