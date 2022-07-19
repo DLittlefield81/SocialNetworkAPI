@@ -85,7 +85,7 @@ module.exports = {
         Thought.findOneAndUpdate(
             { _id: req.params.thoughtId },
             { $addToSet: { reactions: req.body } },
-            { runValidators: true, new: true }
+            { new: true }
         )
             .then((thought) =>
                 !thought
@@ -101,11 +101,15 @@ module.exports = {
             { $pull: { reactions: { reactionId: req.params.reactionId } } },
             { runValidators: true, new: true }
         )
-            .then((thought) =>
-                !thought
-                    ? res.status(404).json({ message: 'No thought with this id!' })
-                    : res.json(thought)
-            )
-            .catch((err) => res.status(500).json(err));
+            .then((dbThoughtData) => {
+                if (!dbThoughtData) {
+                    return res.status(404).json({ message: 'Thought with this ID does not exist.' });
+                }
+                res.json(dbThoughtData);
+            })
+            .catch((err) => {
+                console.log(err);
+                res.status(500).json(err);
+            });
     },
 };
